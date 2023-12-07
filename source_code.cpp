@@ -1,6 +1,6 @@
 #include <vector>
-#include <vector>
 #include <initializer_list>
+#include <vector>
 #include <functional>
 #include <optional>
 #include <iostream>
@@ -120,7 +120,7 @@ void testLambdasAndAuto() {
         return 25 < y;
     };
 
-    std::vector<int> vec = {10, 20, 5, 15};
+    std::vector<int> vec = {10, 20, 5, 1500, 1000000};
     std::sort(vec.begin(), vec.end(), lambda);
 }
 
@@ -181,11 +181,10 @@ public:
 
     void controlFlowTest() {
         int x = 10, y = 20;
-        if (x < y) {
+        if (x < y)
             std::cout << "x is less than y" << std::endl;
-        } else {
+        else
             std::cout << "y is less or equal to x" << std::endl;
-        }
     }
 
 private:
@@ -274,6 +273,10 @@ int test5() {
         ++counter;
     }
 
+    while(true) {
+        break;
+    }
+
     // do-while loop example
     do {
         std::cout << "Executing at least once, counter: " << counter << std::endl;
@@ -326,9 +329,9 @@ private:
 };
 
 MyClass obj{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-MyClass obj2{{1, 2, 3}, {4, 5, 6}, {7, 8, 9},};
+MyClass obj2{{1, 2, 3}, {44, 5, 6}, {7, 80, 9},};
 
-auto test6() -> void {
+void test6() {
     int x = 5;
     auto lambda = [y = std::move(x), z = x + 1]() {
         std::cout << "y: " << y << ", z: " << z << std::endl;
@@ -356,11 +359,12 @@ public:
 alignas(16) int alignedVariable = 0;
 
 void test7() {
-    MyAttributeClass obj;
+    auto obj = MyAttributeClass {};
     auto result = obj.criticalFunction();
     std::cout << "Result: " << result << std::endl;
     std::cout << "Aligned variable: " << alignedVariable << std::endl;
 }
+
 
 struct S {int x; double y;};
 
@@ -386,6 +390,17 @@ concept C1 = requires(T x) {
   {x - x} -> std::same_as<decltype(x)>;
 };
 
+
+  template <C1 T>
+  auto add(T x, T y) -> T {
+    return x + y; 
+  }
+
+  []<typename T>(std::vector<T> v) -> decltype(auto) {
+    for (T x : v) {}
+    return v;
+  }(std::vector{1, 2});    
+
 }
 }
 
@@ -405,17 +420,8 @@ int main() {
   auto operator ""_mi(long double x) {
     return x * 1609.344;
   }
-  auto d = 10.5_mi;
+  const auto d = 10.5_mi;
 
   auto [x, y] = get_pair();
 
-  template <C1 T>
-  auto add(T x, T y) -> T {
-    return x + y; 
-  }
-
-  []<typename T>(std::vector<T> v) -> decltype(auto) {
-    for (T x : v) {}
-    return v;
-  }(std::vector{1, 2});    
 }

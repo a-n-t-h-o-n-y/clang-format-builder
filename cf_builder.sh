@@ -3,6 +3,7 @@
 # Define the path to the .clang-format and the source file to be formatted
 CLANG_FORMAT_FILE="./.clang-format"
 SOURCE_FILE="./source_code.cpp"
+OUTPUT_FILE="./output.cpp"
 
 # Ensure inotifywait and clang-format are installed
 if ! command -v inotifywait &> /dev/null
@@ -25,8 +26,8 @@ generate_default_clang_format() {
 
 # Function to apply clang-format to the source file
 format_source_code() {
-    clang-format -i -style=file $SOURCE_FILE
-    echo "Formatted $SOURCE_FILE using updated .clang-format"
+    clang-format -style=file $SOURCE_FILE >| $OUTPUT_FILE
+    echo "Formatted $SOURCE_FILE to $OUTPUT_FILE using .clang-format"
 }
 
 # Check if .clang-format exists, if not, generate a default one
