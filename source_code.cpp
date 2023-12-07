@@ -1,6 +1,14 @@
 #include <vector>
+#include <vector>
+#include <initializer_list>
+#include <functional>
+#include <optional>
 #include <iostream>
 #include <algorithm>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <numeric>
 #include <memory>
 #include <functional>
 #include <string>
@@ -12,6 +20,20 @@
 
 #define SOME_MACRO(x) (x * x)
 #define ANOTHER_MACRO(y) [y](int a){ return a + y; }
+#define MULTI_LINE_MACRO(x, y) \
+    if ((x) > (y)) {           \
+        std::cout << (x)       \
+                  << " is greater than " \
+                  << (y) << std::endl;   \
+    } else {                   \
+        std::cout << (x)       \
+                  << " is not greater than " \
+                  << (y) << std::endl;   \
+    }
+
+
+namespace LevelOneNamespace {
+namespace LevelTwoNamespace {
 
 // Class to test various formatting rules
 class TestFormatter {
@@ -54,7 +76,7 @@ void functionWithParams(int a, double b, const std::string& c) {
     auto result = lambda(5);
 }
 
-int main() {
+int test1() {
     TestFormatter formatter;
     formatter.publicMethod();
 
@@ -102,7 +124,7 @@ void testLambdasAndAuto() {
     std::sort(vec.begin(), vec.end(), lambda);
 }
 
-int main() {
+int test2() {
     TemplateClass<int> intTemplate(10);
     intTemplate.display();
 
@@ -180,7 +202,7 @@ void smartPointerTest() {
     return 42;
 }
 
-int main() {
+int test3() {
     AdvancedClass<double> advancedInstance;
     auto result = advancedInstance.specializedFunction(3.14);
 
@@ -217,7 +239,7 @@ void ClassWithVeryLongMemberNamesAndFunctionDeclarations::functionWithExceedingl
     std::cout << "This function has a very long name and parameters to test line wrapping in clang-format." << std::endl;
 }
 
-int main() {
+int test4() {
     ClassWithVeryLongMemberNamesAndFunctionDeclarations longNamedClass;
     longNamedClass.functionWithExceedinglyLongNameToTestTheWrappingBehaviorOfFunctionDeclarations(42, 3.14);
 
@@ -243,3 +265,157 @@ private:
     std::vector<std::string> listWithTrailingComma;
     std::vector<std::string> listWithoutTrailingComma;
 };
+
+int test5() {
+    // while loop example
+    int counter = 0;
+    while (counter < 5) {
+        std::cout << "Counter: " << counter << std::endl;
+        ++counter;
+    }
+
+    // do-while loop example
+    do {
+        std::cout << "Executing at least once, counter: " << counter << std::endl;
+        --counter;
+    } while (counter > 0);
+
+    // std::algorithm with long lambda invocation
+    std::vector<int> numbers = {1, 2, 3, 4, 5};
+    std::for_each(numbers.begin(), numbers.end(), [](int number) {
+        std::cout << "Number squared: " << number * number << std::endl;
+    });
+
+    // Another std::algorithm example with inline iterators and lambda
+    std::vector<int> values(10);
+    std::iota(values.begin(), values.end(), 1); // Fill with 1, 2, ..., 10
+    auto result = std::find_if(values.begin(), values.end(), [](int val) {
+        return val > 5; // Find the first value greater than 5
+    });
+
+    if (result != values.end()) {
+        std::cout << "First value greater than 5: " << *result << std::endl;
+    }
+
+    return 0;
+}
+
+template <typename T>
+class Outer {
+    template <typename U>
+    class Inner {
+    public:
+        Inner(U u) : value(u) {}
+    private:
+        U value;
+    };
+
+public:
+    Outer(T t) : inner(t) {}
+
+private:
+    Inner<T> inner;
+};
+
+class MyClass {
+public:
+    MyClass(std::initializer_list<std::vector<int>> list) : data(list) {}
+
+private:
+    std::vector<std::vector<int>> data;
+};
+
+MyClass obj{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+MyClass obj2{{1, 2, 3}, {4, 5, 6}, {7, 8, 9},};
+
+auto test6() -> void {
+    int x = 5;
+    auto lambda = [y = std::move(x), z = x + 1]() {
+        std::cout << "y: " << y << ", z: " << z << std::endl;
+    };
+    lambda();
+}
+
+template <typename... Args>
+class VariadicTemplate {
+public:
+    void printSize() {
+        std::cout << "Number of template parameters: " << sizeof...(Args) << std::endl;
+    }
+};
+
+VariadicTemplate<int, double, char> obj;
+
+class [[nodiscard]] MyAttributeClass {
+public:
+    [[nodiscard]] int criticalFunction() const {
+        return 42;
+    }
+};
+
+alignas(16) int alignedVariable = 0;
+
+void test7() {
+    MyAttributeClass obj;
+    auto result = obj.criticalFunction();
+    std::cout << "Result: " << result << std::endl;
+    std::cout << "Aligned variable: " << alignedVariable << std::endl;
+}
+
+struct S {int x; double y;};
+
+class C {
+  public:
+    C& operator+=(const C&) { if(c) d++; return *this; } 
+    C operator+ (const C& o) { return C(*this) += o; }
+    C& operator-() { toggle(); return *this; }  
+  private:
+    void toggle() { negate ? negate = false : negate = true; }  
+    bool negate{false}; int c{0}; double d{0.0};
+};   
+
+struct B {
+  B() = default;
+  B(const B&) = delete; 
+  int x{0}; double y{0.0};
+};
+
+template <typename T> 
+concept C1 = requires(T x) {
+  {x + x} -> std::convertible_to<int>;
+  {x - x} -> std::same_as<decltype(x)>;
+};
+
+}
+}
+
+int main() {
+
+  auto x = cond1 ? throw E{} : 
+      cond2 ? val2 :
+          !cond3 ? val3 :
+              val4;
+
+  using Func = std::optional<std::function<double(double)>>;  
+  Func f = [](double x) { return 2*x; };
+
+  S arr[2][5]; 
+  int (*ap)[5] = arr; 
+
+  auto operator ""_mi(long double x) {
+    return x * 1609.344;
+  }
+  auto d = 10.5_mi;
+
+  auto [x, y] = get_pair();
+
+  template <C1 T>
+  auto add(T x, T y) -> T {
+    return x + y; 
+  }
+
+  []<typename T>(std::vector<T> v) -> decltype(auto) {
+    for (T x : v) {}
+    return v;
+  }(std::vector{1, 2});    
+}
